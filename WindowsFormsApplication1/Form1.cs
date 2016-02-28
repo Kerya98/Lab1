@@ -28,23 +28,40 @@ namespace WindowsFormsApplication1
             for (int i = 0; i < line.Length; i++)
             {
                 if (line[i] == '<' && line[i + 1] == '/' && line[i + 2] == 'a' && line[i + 3] == '>')
-                    ChangeTegEnd(i, ref line);
+                    ChangeTegEnd(i, "</a>".Length, ref line);
 
                 if (line[i] == '<' && line[i + 1] == 'a')
-                    ChangeTegStart(i, ref line);
+                    ChangeTegStart(i, "<a href".Length, ref line);
             }
 
             richTextBoxOutput.Text = line;
         }
 
-        private void ChangeTegEnd(int startIndex, ref string line)
+        private void ChangeTegEnd(int startIndex, int length, ref string line)
         {
-
+            line = line.Remove(startIndex, length);
+            line = line.Insert(startIndex, "[/URL]");
         }
 
-        private void ChangeTegStart(int startIndex, ref string line)
-        {           
-            
+
+
+        private void ChangeTegStart(int startIndex, int length, ref string line)
+        {
+            line = line.Remove(startIndex, length);
+            line = line.Insert(startIndex, "[URL");
+
+            Boolean flag = true;
+            int i = 0;
+            while (flag)
+            {
+                if (line[startIndex + i] == '"' && line[startIndex + i + 1] == '>')
+                {
+                    flag = false;
+                    line = line.Remove(startIndex + i, 2);
+                    line = line.Insert(startIndex + i, "]");
+                }
+                i++;
+            }
         }
     }
 }
